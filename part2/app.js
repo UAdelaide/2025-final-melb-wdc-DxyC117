@@ -4,6 +4,7 @@ const db = require('./models/db');
 require('dotenv').config();
 
 const app = express();
+var curUser = '';
 
 // Middleware
 app.use(express.json());
@@ -52,6 +53,53 @@ app.use(express.static(path.join(__dirname, '/public')));
     console.error('Error setting up database. Ensure Mysql is running: service mysql start', err);
   }
 })();
+
+// Get current user
+app.get('/api/users/me', async (req, res) => {
+  try {
+    res.json(curUser)
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch current user' });
+  }
+});
+
+// Route to return the user with specified username and password as JSON
+app.post('/api/login', async (req, res) => {
+  try {
+    const username = req.body.username;
+    const password_hash = req.body.password_hash;
+
+    const [user] = await db.execute(`
+            select *
+            from users
+            where username = ? and password_hash = ?
+        `, [username, password_hash]);
+    
+    if(user.length != 0){
+      curUser = user[0];
+    }
+    
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch dogs' });
+  }
+});
+
+// Route to return the user with specified username and password as JSON
+app.post('/api/owner/dogs', async (req, res) => {
+  try {
+    const user_id = req.body.user_id;
+
+    const [dogs] = await db.execute(`
+            select dogs.dog_id as dog_id, dogs.name as dog_name, size
+            from dogs
+            where dogs.owner_id = ?
+        `, [user_id]);
+    res.json(dogs);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch dogs' });
+  }
+});
 
 // Route to return dogs as JSON
 app.get('/api/dogs', async (req, res) => {
