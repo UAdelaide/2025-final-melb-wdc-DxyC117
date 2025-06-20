@@ -57,7 +57,7 @@ app.use(express.static(path.join(__dirname, '/public')));
 // Get current user
 app.get('/api/users/me', async (req, res) => {
   try {
-    res.json(curUser)
+    res.json(curUser);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch current user' });
   }
