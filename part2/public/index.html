@@ -13,6 +13,15 @@
     <h1 class="mb-4 text-primary">{{ message }}</h1>
     <p class="lead">Connect with trusted walkers for your beloved dog!</p>
 
+    <div class="card-body">
+      <div class="card-header spinning">
+        <h2 class="m-0">DOG OF THE DAY!</h2>
+        <h3 class="m-0">Max - 3-year-old Golden Retriever</h2>
+      </div>
+      <img :src="dog_of_the_day_img" width="300" alt="Dog of the Day"/>
+      <p class="lead">A friendly, energetic companion who loves fetch, swimming, and belly rubs. His playful charm and gentle nature make everyone smile!</p>
+    </div>
+
     <a href="owner-dashboard.html" class="btn btn-outline-primary me-2">Owner Dashboard</a>
     <a href="walker-dashboard.html" class="btn btn-outline-success">Walker Dashboard</a>
   </div>
@@ -22,8 +31,21 @@
     createApp({
       data() {
         return {
-          message: 'Welcome to the Dog Walking Service!'
+          message: 'Welcome to the Dog Walking Service!',
+          dog_of_the_day_img: ''
         };
+      },
+      mounted() {
+        this.GetDogOfTheDayImg();
+      },
+      methods: {
+        GetDogOfTheDayImg() {
+          fetch('https://dog.ceo/api/breeds/image/random')
+            .then(response => response.json())
+            .then(data => {
+              this.dog_of_the_day_img = data.message;
+            });
+        }
       }
     }).mount('#app');
   </script>
