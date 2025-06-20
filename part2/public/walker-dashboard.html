@@ -33,12 +33,21 @@
       </div>
     </div>
     <p v-else>No available walk requests at the moment.</p>
+
+    <button type="botton" class="btn btn-primary" @click="logout">Logout</button>
+
   </div>
 
   <script>
     const { createApp, ref, onMounted } = Vue;
 
     createApp({
+      methods: {
+        logout() {
+          sessionStorage.removeItem("loginUser");
+          window.location.href = 'index.html';
+        }
+      },
       setup() {
         const walks = ref([]);
         const message = ref('');
