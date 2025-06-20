@@ -59,7 +59,7 @@
 
             if (response.data.length != 0) {
               userObj = response.data[0]
-              sessionStorage.setItem('loginUser', userObj)
+              sessionStorage.setItem('loginUser', JSON.stringify(userObj))
               if (userObj.role === 'owner') {
                 window.location.href = 'owner-dashboard.html';
               } else {
@@ -76,7 +76,7 @@
         }
       },
       mounted() {
-        const userObj = sessionStorage.getItem('loginUser');
+        const userObj = JSON.parse(sessionStorage.getItem('loginUser'));
         if (userObj) {
           if (userObj.role === 'owner') {
             window.location.href = 'owner-dashboard.html';
