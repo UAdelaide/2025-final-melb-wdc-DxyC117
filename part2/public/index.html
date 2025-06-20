@@ -19,6 +19,27 @@
       </div>
     </div>
 
+    <div>
+      <table class="container py-5">
+        <thead>
+          <tr>
+            <th>Picture</th>
+            <th>Dog's name</th>
+            <th>Owner's name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="dog in dogs" :key="dog.id">
+            <td>
+              <img :src="dog.img_url" width="100"/>
+            </td>
+            <td>{{ dog.dog_name }}</td>
+            <td>{{ dog.owner_username }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <h1 class="mb-4 text-primary">{{ message }}</h1>
 
     <div class="card mb-r4">
@@ -45,7 +66,8 @@
           username: '',
           password: '',
           showError: false,
-          errorMessage: ''
+          errorMessage: '',
+          dogs: []
         };
       },
       methods: {
@@ -73,9 +95,20 @@
             this.errorMessage = 'Login failed. Please try again.';
             this.showError = true;
           }
+        },
+        async loadDogs() {
+          const response = await axios.get('/api/dogs');
+          this.dogs = response.data;
+          const image_url_response = await axios.get('https://dog.ceo/api/breeds/image/random/' + this.dogs.length);
+          image_url_response_data = image_url_response.data;
+          image_urls = image_url_response_data.message;
+          for(var i = 0; i < this.dogs.length; i++){
+            this.dogs[i].img_url = image_urls[i];
+          }
         }
       },
       mounted() {
+        this.loadDogs();
         const userObj = JSON.parse(sessionStorage.getItem('loginUser'));
         if (userObj) {
           if (userObj.role === 'owner') {
